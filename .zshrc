@@ -7,40 +7,7 @@ else
    export ZDOTDIR="${HOME}/.config/zsh/"
 fi
 
-# tmux autostart
-# ##############
-
-# ZJ_SESSIONS=$(zellij list-sessions)
-# NO_SESSIONS=$(echo "${ZJ_SESSIONS}" | wc -l)
-# if [ "${NO_SESSIONS}" -ge 2 ]; then
-#     zellij attach \
-#     "$(echo "${ZJ_SESSIONS}" | sk)"
-# else
-#    zellij attach -c
-# fi
-
-# if [[ -z "$ZELLIJ" ]]; then
-#     if [[ "$ZELLIJ_AUTO_ATTACH" == "true" ]]; then
-#         zellij attach -c
-#     else
-#         zellij
-#     fi
-#     if [[ "$ZELLIJ_AUTO_EXIT" == "true" ]]; then
-#         exit
-#     fi
-# elif command -v tmux &> /dev/null && [[ $UID -ne 0 ]] && [[ -v DISPLAY ]] && [[ -v KITTY_WINDOW_ID ]] && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
-#   exec tmux
-# fi
-
-# notify
-# ######
-
-# if [[ -v DISPLAY && -s "${ZDOTDIR:-$HOME}/notify/notify.plugin.zsh" ]]; then
-#    source "${ZDOTDIR:-$HOME}/notify/notify.plugin.zsh"
-#    zstyle ':notify:*' error-title "Command failed (#{time_elapsed} seconds)"
-#    zstyle ':notify:*' success-title "Command success (#{time_elapsed} seconds)"
-#    zstyle ':notify:*' expire-time 2500
-# fi
+source ${HOME}/.profile
 
 # ZComet
 # ######
@@ -78,10 +45,27 @@ autoload -U edit-command-line
 zle -N edit-command-line
 bindkey -M vicmd v edit-command-line
 
+# Custom PATH
+if [[ -d "${ZDOTDIR}/bin" ]]; then
+  export PATH=$PATH:"${ZDOTDIR}/bin"
+fi
+if [[ -d "${HOME}/.cargo/bin" ]]; then
+  export PATH=$PATH:${HOME}/.cargo/bin
+fi
+if [[ -d "/usr/local/cargo/bin" ]]; then
+  export PATH=$PATH:/usr/local/cargo/bin
+fi
+
 # prompt
 # #####
 
-eval "$(starship init zsh)"
+# eval "$(starship init zsh)"
+
+# Prompt
+if [[ -f "${HOME}/.config/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
+  source "${HOME}/.config/powerlevel10k/powerlevel10k.zsh-theme"
+fi
+
 
 # Global settings
 # ###############
@@ -187,14 +171,6 @@ function expand-ealias()
 }
 
 zle -N expand-ealias
-
-# Custom PATH
-if [[ -d "${ZDOTDIR}/bin" ]]; then
-  export PATH=$PATH:"${ZDOTDIR}/bin"
-fi
-if [[ -d "${HOME}/.cargo/bin" ]]; then
-  export PATH=$PATH:${HOME}/.cargo/bin
-fi
 
 # builtin
 alias sz="source $HOME/.zshrc"
