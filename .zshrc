@@ -227,7 +227,7 @@ kegrep() {
   local files=()
   while IFS= read -r -d '' file; do
     files+=("$file")
-  done < <(grep -rlZ "$pattern" "$dir")
+  done < <(grep --exclude-dir=build --exclude-dir=node_modules -rlZ "$pattern" "$dir")
 
   if [[ ${#files[@]} -eq 0 ]]; then
     echo "No matching files found."
@@ -257,10 +257,12 @@ ealias z="zellij"
 ealias za="zellij attach "
 
 # Keyboard qwerty with accent
-if [[ -f "${HOME}/.Xmodmap" ]]; then
-   alias rebind="setxkbmap -option compose:rctrl ; xmodmap ${HOME}/.Xmodmap"
-else
-   alias rebind='setxkbmap -option compose:ralt'
+if [[ "$XDG_SESSION_TYPE" == "X" ]]; then
+  if [[ -f "${HOME}/.Xmodmap" ]]; then
+     alias rebind="setxkbmap -option compose:rctrl ; xmodmap ${HOME}/.Xmodmap"
+  else
+     alias rebind='setxkbmap -option compose:ralt'
+  fi
 fi
 
 # Alias post command
@@ -285,7 +287,7 @@ export GIT_EDITOR=$EDITOR
 export TIG_EDITOR=$EDITOR
 export KEYTIMEOUT=1
 export BC_LINE_LENGTH=0 # fix for bc when no newline
-export GOPATH=$HOME/Software/go
+export GOPATH=$HOME/Softwares/go
 
 # Functions (binded to keys)
 # #########
