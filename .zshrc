@@ -393,6 +393,17 @@ fi
 magic-popd () {
    if [[ -z $BUFFER ]]; then
       popd
+
+      # Explicitly invoke chpwd and precmd hooks so p10k knows the state changed
+      local f
+      for f in chpwd "${chpwd_functions[@]}" precmd "${precmd_functions[@]}"; do
+         [[ "${+functions[$f]}" == 0 ]] || "$f" &>/dev/null || true
+      done
+
+      p10k display -r
+
+      zle reset-prompt
+
       zle accept-line
    fi
 }
@@ -428,3 +439,5 @@ fi
 
 # To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
 [[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
+
+[[ ! -f ~/.config/broot/launcher/bash/br ]] || source ~/.config/broot/launcher/bash/br
